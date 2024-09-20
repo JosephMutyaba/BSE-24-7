@@ -1,93 +1,63 @@
-# Project Title
+# To Do List Application
 
-One Paragraph of the project description
-
-Initially appeared on
-[gist](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2). But the page cannot open anymore so that is why I have moved it here.
+A To-Do List application that allows users to create, manage, and track their daily tasks.
 
 ## Getting Started
 
-These instructions will give you a copy of the project up and running on
-your local machine for development and testing purposes. See deployment
-for notes on deploying the project on a live system.
+These instructions will help you set up the project on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-Requirements for the software and other tools to build, test and push 
-- [Example 1](https://www.example.com)
-- [Example 2](https://www.example.com)
+To run this application, you'll need the following:
 
-### Installing
+- **Frontend**: Any modern web browser (e.g., Google Chrome, Mozilla Firefox, Microsoft Edge)
+- **Backend**: [Java Development Kit (JDK) 11+](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) and [IntelliJ IDEA](https://www.jetbrains.com/idea/) (or your preferred Java IDE)
 
-A step by step series of examples that tell you how to get a development
-environment running
+### Installation
 
-Say what the step will be
+1. **Clone the repository**:
+https://github.com/JosephMutyaba/BSE-24-7.git
 
-    Give the example
+2. **Set up the backend**:
+- Open the project in IntelliJ IDEA.
+- Build and run the Spring Boot application.
 
-And repeat
+3. **Set up the frontend**:
+- Navigate to the frontend directory.
+- Install the required dependencies:
+  ```
+  npm install
+  ```
+- Start the development server:
+  ```
+  npm start
+  ```
 
-    until finished
+The application should now be running on your local machine.
 
-End with an example of getting some data out of the system or using it
-for a little demo
+## Usage
 
-## Running the tests
+Here are the main commands for interacting with the To-Do List application:
 
-Explain how to run the automated tests for this system
+**Backend**:
+- `./gradlew build`: Builds the backend application.
+- `./gradlew run`: Starts the backend server.
 
-### Sample Tests
-
-Explain what these tests test and why
-
-    Give an example
-
-### Style test
-
-Checks if the best practices and the right coding style has been used.
-
-    Give an example
-
-## Deployment
-
-Add additional notes to deploy this on a live system
-
-## Built With
-
-  - [Contributor Covenant](https://www.contributor-covenant.org/) - Used
-    for the Code of Conduct
-  - [Creative Commons](https://creativecommons.org/) - Used to choose
-    the license
+**Frontend**:
+- `npm install`: Installs the required dependencies.
+- `npm start`: Starts the development server for the frontend.
+- `npm test`: Runs the frontend tests.
+- `npm build`: Builds the frontend application for production.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code
-of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [Semantic Versioning](http://semver.org/) for versioning. For the versions
-available, see the [tags on this
-repository](https://github.com/PurpleBooth/a-good-readme-template/tags).
-
-## Authors
-
-  - **Billie Thompson** - *Provided README Template* -
-    [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of
-[contributors](https://github.com/PurpleBooth/a-good-readme-template/contributors)
-who participated in this project.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 
-This project is licensed under the [CC0 1.0 Universal](LICENSE.md)
-Creative Commons License - see the [LICENSE.md](LICENSE.md) file for
-details
+This project is licensed under the [MIT License](LICENSE.md).
 
 ## Acknowledgments
 
-  - Hat tip to anyone whose code is used
-  - Inspiration
-  - etc
+- **Inspiration**: The idea for this project came from the need to have a simple and effective way to manage daily tasks.
+- **Resources**: The development of this application was made possible by the wealth of information and support available online, including tutorials, forums, and open-source libraries.
