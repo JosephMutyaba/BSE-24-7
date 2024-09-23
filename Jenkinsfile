@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                
                 git 'https://github.com/JosephMutyaba/BSE-24-7.git'
             }
         }
