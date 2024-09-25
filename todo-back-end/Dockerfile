@@ -9,3 +9,4 @@ COPY ${JAR_FILE} app.jar
 
 # Run the jar file when the Docker container starts
 ENTRYPOINT ["java", "-jar", "/app.jar"]
+
