@@ -11,12 +11,11 @@ pipeline {
         stage('Backend Build and Test') {
             steps {
                 dir('todo-back-end') {
-                    // Backend is in the 'backend' folder
-                    echo 'Building Spring Boot backend...'
-                    sh 'mvn clean install'
+                    echo 'Building Spring Boot backend using Maven Wrapper...'
+                    sh './mvnw clean install' // Using Maven Wrapper
 
                     echo 'Running backend tests...'
-                    sh 'mvn test'
+                    sh './mvnw test' // Using Maven Wrapper for tests
                 }
             }
         }
@@ -24,7 +23,6 @@ pipeline {
         stage('Frontend Build and Test') {
             steps {
                 dir('todo-front-end') {
-                    // Frontend is in the 'frontend' folder
                     echo 'Installing dependencies...'
                     sh 'npm install'
 
@@ -42,7 +40,7 @@ pipeline {
                 echo 'Building Docker images for backend and frontend...'
 
                 // Backend Docker image
-                dir('backend') {
+                dir('todo-back-end') {
                     script {
                         sh 'docker build -t $DOCKER_IMAGE_BACKEND .'
                         sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
@@ -51,7 +49,7 @@ pipeline {
                 }
 
                 // Frontend Docker image
-                dir('frontend') {
+                dir('todo-front-end') {
                     script {
                         sh 'docker build -t $DOCKER_IMAGE_FRONTEND .'
                         sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
