@@ -11,11 +11,15 @@ pipeline {
         stage('Backend Build and Test') {
             steps {
                 dir('todo-back-end') {
+                    // Ensure Maven Wrapper has execute permissions
+                    echo 'Setting executable permission for mvnw...'
+                    sh 'chmod +x mvnw'
+
                     echo 'Building Spring Boot backend using Maven Wrapper...'
-                    sh './mvnw clean install' // Using Maven Wrapper
+                    sh './mvnw clean install'
 
                     echo 'Running backend tests...'
-                    sh './mvnw test' // Using Maven Wrapper for tests
+                    sh './mvnw test'
                 }
             }
         }
