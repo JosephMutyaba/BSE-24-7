@@ -1,5 +1,5 @@
 # Use OpenJDK as the base image
-FROM openjdk:21-jdk
+FROM openjdk:17-jdk
 
 # Set the ARG JAR_FILE to point to the jar file in the target directory
 ARG JAR_FILE=target/*.jar
