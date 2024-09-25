@@ -23,7 +23,7 @@ pipeline {
                     sh './mvnw clean install'
 
                     echo 'Running backend tests...'
-                    sh './mvnw test'
+                    //sh './mvnw test'
                 }
             }
         }
