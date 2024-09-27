@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<ruleset name="Java PMD Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+         http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
+         xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <description>
+        A basic PMD ruleset for Java projects.
+    </description>
+
+    <!-- Basic Rules -->
+    <rule ref="category/java/bestpractices.xml" />
+    <rule ref="category/java/codestyle.xml" />
+    <rule ref="category/java/design.xml" />
+    <rule ref="category/java/errorprone.xml" />
+    <rule ref="category/java/multithreading.xml" />
+    <rule ref="category/java/performance.xml" />
+    <rule ref="category/java/security.xml" />
+    <rule ref="category/java/documentation.xml" />
+
+    <!-- Optional: Specific Rule Exclusions (if needed) -->
+    <!-- Example: To exclude a specific rule, you can use something like the below line -->
+    <!-- <rule ref="category/java/bestpractices.xml/UnusedPrivateField" deprecated="true"/> -->
+</ruleset>
