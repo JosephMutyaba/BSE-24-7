@@ -1,6 +1,15 @@
-package com.todo.app.todo_list.exeption;
+package com.todo.app.todo_list.exception;
 
-public class ResourceNotFoundException extends Exception {
+/**
+ * Exception thrown when a requested resource is not found.
+ */
+public class ResourceNotFoundException extends RuntimeException {
+
+    /**
+     * Constructs a new ResourceNotFoundException with the specified detail message.
+     *
+     * @param message the detail message
+     */
     public ResourceNotFoundException(String message) {
         super(message);
     }

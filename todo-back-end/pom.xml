@@ -57,10 +57,49 @@
 			<scope>test</scope>
 		</dependency>
 
-
+		<!-- https://mvnrepository.com/artifact/com.puppycrawl.tools/checkstyle -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<groupId>com.puppycrawl.tools</groupId>
+			<artifactId>checkstyle</artifactId>
+			<version>10.18.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.sourceforge.pmd/pmd -->
+		<dependency>
+			<groupId>net.sourceforge.pmd</groupId>
+			<artifactId>pmd</artifactId>
+			<version>7.4.0</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs -->
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs</artifactId>
+			<version>4.8.6</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-checkstyle-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-checkstyle-plugin</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-pmd-plugin -->
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-pmd-plugin</artifactId>
+			<version>3.25.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -79,12 +118,52 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.4.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Referencing checkstyle.xml without a specific path -->
+					<configLocation>checkstyle.xml</configLocation>
+					<consoleOutput>true</consoleOutput>
+					<failOnViolation>true</failOnViolation>
+				</configuration>
+			</plugin>
+
+			<!-- PMD Plugin Configuration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.25.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+							<goal>pmd</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Set the location of your custom ruleset -->
+					<rulesets>
+						<ruleset>pmd.xml</ruleset>
+					</rulesets>
+					<targetJdk>17</targetJdk> <!-- Set this to match your Java version -->
+					<failOnViolation>true</failOnViolation> <!-- Set to false if you want to proceed on violations -->
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
-
-
-
 
 
 </project>
