@@ -3,7 +3,6 @@ pipeline {
 
      tools {
         nodejs 'node_20.13.1'
-        docker 'docker'
     }
     
 
