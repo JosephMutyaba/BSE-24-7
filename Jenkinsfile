@@ -5,6 +5,7 @@ pipeline {
         nodejs 'node_20.13.1'
     }
     
+    
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials-id')
         DOCKER_IMAGE_BACKEND = 'josephmutyaba/todolistapp_backend'
