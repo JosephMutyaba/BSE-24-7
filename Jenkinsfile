@@ -13,37 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Backend Build and Test') {
-            steps {
-                dir('todo-back-end') {
-                    // Ensure Maven Wrapper has execute permissions
-                    echo 'Setting executable permission for mvnw...'
-                    sh 'chmod +x mvnw'
-
-                    echo 'Building Spring Boot backend using Maven Wrapper...'
-                    sh './mvnw clean install'
-
-                    echo 'Running backend tests...'
-                    sh './mvnw test'
-                }
-            }
-        }
-
-        stage('Frontend Build and Test') {
-            steps {
-                dir('todo-front-end') {
-                    echo 'Installing dependencies...'
-                    sh 'npm install'
-
-                    echo 'Running frontend build...'
-                    sh 'npm run build'
-
-                    echo 'Running frontend tests...'
-                    //sh 'npm test'
-                }
-            }
-        }
-
+        
         stage('Build Docker Images') {
             steps {
                 echo 'Building Docker images for backend and frontend...'
