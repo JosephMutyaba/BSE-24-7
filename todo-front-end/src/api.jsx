@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/todos';
+const API_URL = 'http://todolistapp-env.eba-eqgzcdp5.us-east-1.elasticbeanstalk.com/api/todos';
 
 export const getTodos = () => axios.get(API_URL);
 export const createTodo = (todo) => axios.post(API_URL, todo);
