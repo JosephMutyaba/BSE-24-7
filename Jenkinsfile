@@ -11,6 +11,7 @@ pipeline {
         DOCKER_IMAGE_FRONTEND = 'josephmutyaba/todolistapp_frontend'
     }
 
+    
     stages {
 
         stage('Backend Build and Test') {
