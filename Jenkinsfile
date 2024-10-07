@@ -1,23 +1,22 @@
 pipeline {
     agent any
 
-     tools {
+    tools {
         nodejs 'node_20.13.1'
     }
-    
+
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials-id')
-        DOCKER_IMAGE_BACKEND = 'josephmutyaba/todolistapp_backend'
-        DOCKER_IMAGE_FRONTEND = 'josephmutyaba/todolistapp_frontend'
+        AWS_CREDENTIALS = credentials('aws-credentials-id')
+        S3_BUCKET_NAME = 'todolist-frontend-app'
+        ELASTIC_BEANSTALK_APP_NAME = 'todolistapp'
+        ELASTIC_BEANSTALK_ENV_NAME = 'Todolistapp-env'
+        REGION = 'us-east-1'  // Modify as per your AWS region
     }
 
-    
     stages {
-
         stage('Backend Build and Test') {
             steps {
                 dir('todo-back-end') {
-                    // Ensure Maven Wrapper has execute permissions
                     echo 'Setting executable permission for mvnw...'
                     sh 'chmod +x mvnw'
 
@@ -44,31 +43,50 @@ pipeline {
                 }
             }
         }
-        
-        stage('Build Docker Images') {
+
+        stage('Deploy Backend to AWS Elastic Beanstalk') {
             steps {
-                echo 'Building Docker images for backend and frontend...'
-
-                // Backend Docker image
-                dir('todo-back-end') {
+                dir('todo-back-end/target') {
                     script {
-                        sh 'docker build -t $DOCKER_IMAGE_BACKEND .'
-                        sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                        sh 'docker push $DOCKER_IMAGE_BACKEND'
-                    }
-                }
+                        echo 'Deploying backend to AWS Elastic Beanstalk...'
 
-                // Frontend Docker image
-                dir('todo-front-end') {
-                    script {
-                        sh 'docker build -t $DOCKER_IMAGE_FRONTEND .'
-                        sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                        sh 'docker push $DOCKER_IMAGE_FRONTEND'
+                        // Prepare JAR file
+                        def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+
+                        // Deploy to Elastic Beanstalk
+                        sh '''
+                        aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
+                        aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
+                        aws configure set default.region ${REGION}
+
+                        aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label $BUILD_NUMBER --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+
+                        aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label $BUILD_NUMBER
+                        '''
                     }
                 }
             }
         }
 
-        
+        stage('Deploy Frontend to AWS S3') {
+            steps {
+                dir('todo-front-end/dist') {
+                    script {
+                        echo 'Deploying frontend to AWS S3...'
+
+                        // Sync the dist/ directory to S3 bucket
+                        sh '''
+                        aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
+                        aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
+                        aws configure set default.region ${REGION}
+
+                        aws s3 sync . s3://${S3_BUCKET_NAME}/ --delete
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
+
+
