@@ -5,6 +5,7 @@ pipeline {
         nodejs 'node_20.13.1'
     }
 
+    
     environment {
         AWS_CREDENTIALS = credentials('aws-credentials-id')
         S3_BUCKET_NAME = 'todolist-frontend-app'
