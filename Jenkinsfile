@@ -36,9 +36,6 @@ pipeline {
 
                     echo 'Running frontend build...'
                     sh 'npm run build'
-
-                    echo 'Running frontend tests...'
-                    //sh 'npm test'
                 }
             }
         }
@@ -53,13 +50,22 @@ pipeline {
                         def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
                         echo "JAR file found: ${jarFile}"
 
-                        // Deploy to Elastic Beanstalk using AWS credentials
+                        // Upload JAR file to S3
                         withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
                             sh '''
-                            echo "Creating application version..."
-                            aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+                            echo "Uploading JAR file to S3..."
+                            aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/
+                            '''
 
+                            // Create application version in Elastic Beanstalk
+                            echo "Creating application version..."
+                            sh '''
+                            aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+                            '''
+
+                            // Update Elastic Beanstalk environment
                             echo "Updating environment..."
+                            sh '''
                             aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
                             '''
                         }
