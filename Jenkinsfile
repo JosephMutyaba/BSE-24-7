@@ -13,54 +13,71 @@ pipeline {
     }
 
     stages {
-    
+        
+        stage('Backend Build and Test') {
+            steps {
+                dir('todo-back-end') {
+                    echo 'Setting executable permission for mvnw...'
+                    sh 'chmod +x mvnw'
 
-        stage('Deploy Backend to AWS Elastic Beanstalk') {
-    steps {
-        dir('todo-back-end/target') {
-            script {
-                echo 'Deploying backend to AWS Elastic Beanstalk...'
+                    echo 'Building Spring Boot backend using Maven Wrapper...'
+                    sh './mvnw clean install'
 
-                // Upload JAR file to S3
-                withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-
-                    // echo 'Uploading JAR file to S3...'
-
-                    // Prepare JAR file
-                    def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
-                    echo "JAR file found: ${jarFile}"
-
-                    // // Upload the JAR file to S3
-                    // withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-                    //      // Ensure the jarFile variable is correctly referenced
-                    //     sh "aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}"
-                    // }
-
-                    sh "aws s3 ls s3://${S3_BUCKET_NAME}/backends/"
-
-
-                    echo 'Deploying backend to AWS Elastic Beanstalk...'
-
-                     // Now create the application version
-                        echo 'Creating application version in Elastic Beanstalk...'
-                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-                            sh """
-                            aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
-                            echo "Updating environment..."
-                            aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
-                            """
-                        }
-                    
-                    // Update Elastic Beanstalk environment
-                   // echo "Updating environment..."
-                    //sh '''
-                    //aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
-                    //'''
+                    echo 'Running backend tests...'
+                    sh './mvnw test'
                 }
             }
         }
-    }
-}
+
+        stage('Frontend Build and Test') {
+            steps {
+                dir('todo-front-end') {
+                    echo 'Installing dependencies...'
+                    sh 'npm install'
+
+                    echo 'Running frontend build...'
+                    sh 'npm run build'
+                }
+            }
+        }
+    
+
+        stage('Deploy Backend to AWS Elastic Beanstalk') {
+            steps {
+                dir('todo-back-end/target') {
+                    script {
+                        echo 'Deploying backend to AWS Elastic Beanstalk...'
+                        // Upload JAR file to S3
+                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+        
+                            // echo 'Uploading JAR file to S3...'
+                            // Prepare JAR file
+                            def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                            echo "JAR file found: ${jarFile}"
+        
+                            // Upload the JAR file to S3
+                            withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                                sh "aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}"
+                            }
+            
+                            echo 'Deploying backend to AWS Elastic Beanstalk...'
+
+                            // Now create the application version
+                            echo 'Creating application version in Elastic Beanstalk...'
+                            withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                                sh """
+                                    aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+                                    echo "Updating environment..."
+                                    aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
+                                """
+                            }
+                            
+                        }
+                    }
+                }
+            
+            }
+        }
 
 
         stage('Deploy Frontend to AWS S3') {
