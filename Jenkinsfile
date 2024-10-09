@@ -44,13 +44,13 @@ pipeline {
                      // Now create the application version
                         echo 'Creating application version in Elastic Beanstalk...'
                         withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-                            sh '''
+                            sh """
                             aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
                             echo "Updating environment..."
                             aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
-                            '''
+                            """
                         }
-
+                    
                     // Update Elastic Beanstalk environment
                    // echo "Updating environment..."
                     //sh '''
