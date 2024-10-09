@@ -5,7 +5,6 @@ pipeline {
         nodejs 'node_20.13.1'
     }
 
-    
     environment {
         AWS_CREDENTIALS = credentials('aws-credentials-id')
         S3_BUCKET_NAME = 'todolist-frontend-app'
@@ -53,16 +52,20 @@ pipeline {
 
                         // Prepare JAR file
                         def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                        echo "JAR file found: ${jarFile}"
 
                         // Deploy to Elastic Beanstalk
                         sh '''
+                        echo "Setting AWS credentials..."
                         aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
                         aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
                         aws configure set default.region ${REGION}
 
-                        aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label $BUILD_NUMBER --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+                        echo "Creating application version..."
+                        aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
 
-                        aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label $BUILD_NUMBER
+                        echo "Updating environment..."
+                        aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
                         '''
                     }
                 }
@@ -77,10 +80,12 @@ pipeline {
 
                         // Sync the dist/ directory to S3 bucket
                         sh '''
+                        echo "Setting AWS credentials..."
                         aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
                         aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
                         aws configure set default.region ${REGION}
 
+                        echo "Syncing to S3..."
                         aws s3 sync . s3://${S3_BUCKET_NAME}/ --delete
                         '''
                     }
@@ -89,5 +94,15 @@ pipeline {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
