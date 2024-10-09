@@ -6,7 +6,6 @@ pipeline {
     }
 
     environment {
-        AWS_CREDENTIALS = credentials('aws-credentials-id') // Fetch AWS credentials
         S3_BUCKET_NAME = 'todolist-frontend-app'
         ELASTIC_BEANSTALK_APP_NAME = 'todolistapp'
         ELASTIC_BEANSTALK_ENV_NAME = 'Todolistapp-env'
@@ -45,34 +44,29 @@ pipeline {
         }
 
         stage('Deploy Backend to AWS Elastic Beanstalk') {
-    steps {
-        dir('todo-back-end/target') {
-            script {
-                echo 'Deploying backend to AWS Elastic Beanstalk...'
+            steps {
+                dir('todo-back-end/target') {
+                    script {
+                        echo 'Deploying backend to AWS Elastic Beanstalk...'
 
-                // Prepare JAR file
-                def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
-                echo "JAR file found: ${jarFile}"
+                        // Prepare JAR file
+                        def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                        echo "JAR file found: ${jarFile}"
 
-                // Deploy to Elastic Beanstalk
-                withCredentials([usernamePassword(credentialsId: 'aws-credentials-id', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh '''
-                    echo "Setting AWS credentials..."
-                    aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                    aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                    aws configure set default.region ${REGION}
+                        // Deploy to Elastic Beanstalk using AWS credentials
+                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                            sh '''
+                            echo "Creating application version..."
+                            aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
 
-                    echo "Creating application version..."
-                    aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
-
-                    echo "Updating environment..."
-                    aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
-                    '''
+                            echo "Updating environment..."
+                            aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
+                            '''
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
         stage('Deploy Frontend to AWS S3') {
             steps {
@@ -80,16 +74,13 @@ pipeline {
                     script {
                         echo 'Deploying frontend to AWS S3...'
 
-                        // Sync the dist/ directory to S3 bucket
-                        sh '''
-                        echo "Setting AWS credentials..."
-                        aws configure set aws_access_key_id ${AWS_CREDENTIALS_USR}
-                        aws configure set aws_secret_access_key ${AWS_CREDENTIALS_PSW}
-                        aws configure set default.region ${REGION}
-
-                        echo "Syncing to S3..."
-                        aws s3 sync . s3://${S3_BUCKET_NAME}/ --delete
-                        '''
+                        // Sync the dist/ directory to S3 bucket using AWS credentials
+                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                            sh '''
+                            echo "Syncing to S3..."
+                            aws s3 sync . s3://${S3_BUCKET_NAME}/ --delete
+                            '''
+                        }
                     }
                 }
             }
