@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        AWS_CREDENTIALS = credentials('aws-credentials-id')
+        AWS_CREDENTIALS = credentials('aws-credentials-id') // Fetch AWS credentials
         S3_BUCKET_NAME = 'todolist-frontend-app'
         ELASTIC_BEANSTALK_APP_NAME = 'todolistapp'
         ELASTIC_BEANSTALK_ENV_NAME = 'Todolistapp-env'
@@ -94,15 +94,3 @@ pipeline {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
