@@ -27,16 +27,22 @@ pipeline {
 
                 // Upload JAR file to S3
                 withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-                    sh '''
-                    echo "Uploading JAR file to S3..."
-                    aws s3 cp todo-list-0.0.1-SNAPSHOT.jar  s3://${S3_BUCKET_NAME}/backends/${jarFile}
-                    '''
 
-                    // Create application version in Elastic Beanstalk
-                    echo "Creating application version..."
-                    sh '''
-                    aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
-                    '''
+
+                    echo 'Uploading JAR file to S3...'
+
+                        // Prepare JAR file
+                        def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                        echo "JAR file found: ${jarFile}"
+
+                        // Upload the JAR file to S3
+                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                            // Ensure the jarFile variable is correctly referenced
+                            sh "aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}"
+                        }
+
+                    
+                   
 
                     // Update Elastic Beanstalk environment
                     echo "Updating environment..."
