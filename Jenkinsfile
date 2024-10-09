@@ -16,39 +16,39 @@ pipeline {
     
 
         stage('Deploy Backend to AWS Elastic Beanstalk') {
-            steps {
-                dir('todo-back-end/target') {
-                    script {
-                        echo 'Deploying backend to AWS Elastic Beanstalk...'
+    steps {
+        dir('todo-back-end/target') {
+            script {
+                echo 'Deploying backend to AWS Elastic Beanstalk...'
 
-                        // Prepare JAR file
-                        def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
-                        echo "JAR file found: ${jarFile}"
+                // Prepare JAR file
+                def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                echo "JAR file found: ${jarFile}"
 
-                        // Upload JAR file to S3
-                        withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
-                            sh '''
-                            echo "Uploading JAR file to S3..."
-                            aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}
+                // Upload JAR file to S3
+                withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
+                    sh '''
+                    echo "Uploading JAR file to S3..."
+                    aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}
+                    '''
 
-                            '''
+                    // Create application version in Elastic Beanstalk
+                    echo "Creating application version..."
+                    sh '''
+                    aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
+                    '''
 
-                            // Create application version in Elastic Beanstalk
-                            echo "Creating application version..."
-                            sh '''
-                            aws elasticbeanstalk create-application-version --application-name ${ELASTIC_BEANSTALK_APP_NAME} --version-label ${BUILD_NUMBER} --source-bundle S3Bucket=${S3_BUCKET_NAME},S3Key=backends/${jarFile}
-                            '''
-
-                            // Update Elastic Beanstalk environment
-                            echo "Updating environment..."
-                            sh '''
-                            aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
-                            '''
-                        }
-                    }
+                    // Update Elastic Beanstalk environment
+                    echo "Updating environment..."
+                    sh '''
+                    aws elasticbeanstalk update-environment --application-name ${ELASTIC_BEANSTALK_APP_NAME} --environment-name ${ELASTIC_BEANSTALK_ENV_NAME} --version-label ${BUILD_NUMBER}
+                    '''
                 }
             }
         }
+    }
+}
+
 
         stage('Deploy Frontend to AWS S3') {
             steps {
