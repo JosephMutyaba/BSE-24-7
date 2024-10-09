@@ -22,8 +22,8 @@ pipeline {
                 echo 'Deploying backend to AWS Elastic Beanstalk...'
 
                 // Prepare JAR file
-                def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
-                echo "JAR file found: ${jarFile}"
+                //def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+               // echo "JAR file found: ${jarFile}"
 
                 // Upload JAR file to S3
                 withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
