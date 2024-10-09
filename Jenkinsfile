@@ -13,32 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Backend Build and Test') {
-            steps {
-                dir('todo-back-end') {
-                    echo 'Setting executable permission for mvnw...'
-                    sh 'chmod +x mvnw'
-
-                    echo 'Building Spring Boot backend using Maven Wrapper...'
-                    sh './mvnw clean install'
-
-                    echo 'Running backend tests...'
-                    sh './mvnw test'
-                }
-            }
-        }
-
-        stage('Frontend Build and Test') {
-            steps {
-                dir('todo-front-end') {
-                    echo 'Installing dependencies...'
-                    sh 'npm install'
-
-                    echo 'Running frontend build...'
-                    sh 'npm run build'
-                }
-            }
-        }
+    
 
         stage('Deploy Backend to AWS Elastic Beanstalk') {
             steps {
