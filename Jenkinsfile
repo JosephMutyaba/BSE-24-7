@@ -36,6 +36,8 @@ pipeline {
                     //     sh "aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}"
                     // }
 
+                    sh "aws s3 ls s3://${S3_BUCKET_NAME}/backends/"
+
 
                     echo 'Deploying backend to AWS Elastic Beanstalk...'
 
