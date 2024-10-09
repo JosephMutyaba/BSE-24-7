@@ -54,7 +54,8 @@ pipeline {
                         withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
                             sh '''
                             echo "Uploading JAR file to S3..."
-                            aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/
+                            aws s3 cp ${jarFile} s3://${S3_BUCKET_NAME}/backends/${jarFile}
+
                             '''
 
                             // Create application version in Elastic Beanstalk
