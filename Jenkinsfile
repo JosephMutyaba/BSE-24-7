@@ -26,9 +26,9 @@ pipeline {
 
                     // echo 'Uploading JAR file to S3...'
 
-                    // // Prepare JAR file
-                    // def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
-                    // echo "JAR file found: ${jarFile}"
+                    // Prepare JAR file
+                    def jarFile = sh(script: "ls *.jar", returnStdout: true).trim()
+                    echo "JAR file found: ${jarFile}"
 
                     // // Upload the JAR file to S3
                     // withAWS(credentials: 'aws-credentials-id', region: "${REGION}") {
