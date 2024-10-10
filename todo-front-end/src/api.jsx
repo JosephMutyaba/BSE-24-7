@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://todolistapp-env.eba-eqgzcdp5.us-east-1.elasticbeanstalk.com/api/todos';
-// const API_URL = import.meta.env.REACT_APP_API_URL;
+// const API_URL = 'http://todolistapp-env.eba-eqgzcdp5.us-east-1.elasticbeanstalk.com/api/todos';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const getTodos = () => axios.get(API_URL);
 export const createTodo = (todo) => axios.post(API_URL, todo);
