@@ -139,7 +139,7 @@ pipeline {
                                 aws elasticbeanstalk update-environment --application-name todolist-production --environment-name Todolist-production-env --version-label ${previousStableVersion}
                             """
                         }
-                        error "Deployment failed and rollback initiated rrr."
+                        error "Deployment failed and rollback initiated."
                     }
                 }
             }
