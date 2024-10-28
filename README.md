@@ -62,3 +62,4 @@ This project is licensed under the [MIT License](LICENSE.md).
 - **Inspiration**: The idea for this project came from the need to have a simple and effective way to manage daily tasks.
 - **Resources**: The development of this application was made possible by the wealth of information and support available online, including tutorials, forums, and open-source libraries.
 - Thank you very much!
+- 
