@@ -1,4 +1,4 @@
-# To Do List Application CFOR
+# To Do List Application
 
 A To-Do List application that allows users to create, manage, and track their daily tasks.
 
